@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <title>History - MedScan AI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+        :root,[data-theme="dark"] {
+            --bg:#080E1A; --surface:#0F1827; --surface2:#152030;
+            --border:rgba(255,255,255,0.07); --border-active:rgba(32,201,181,0.4);
+            --accent:#20C9B5; --accent2:#3B82F6; --text:#F0F4FF; --muted:#8899AA;
+            --danger:#FF5E7E; --success:#34D399;
+            --nav-bg:rgba(8,14,26,0.88); --grid-line:rgba(32,201,181,0.03);
+            --tag-bg:rgba(32,201,181,0.08); --tag-bd:rgba(32,201,181,0.2);
+            --toggle-bg:#152030; --toggle-bd:rgba(255,255,255,0.12);
+            --badge-n-bg:rgba(52,211,153,0.1); --badge-d-bg:rgba(255,94,126,0.1);
+            --th-bg:rgba(255,255,255,0.03);
+        }
+        [data-theme="light"] {
+            --bg:#F4F7FB; --surface:#FFFFFF; --surface2:#EEF2F8;
+            --border:rgba(0,0,0,0.08); --border-active:rgba(12,158,145,0.35);
+            --accent:#0C9E91; --accent2:#2563EB; --text:#0B1F3A; --muted:#5A6A82;
+            --danger:#D63F5E; --success:#1A9E6A;
+            --nav-bg:rgba(244,247,251,0.92); --grid-line:rgba(12,158,145,0.04);
+            --tag-bg:rgba(12,158,145,0.07); --tag-bd:rgba(12,158,145,0.18);
+            --toggle-bg:#E8EDF5; --toggle-bd:rgba(0,0,0,0.1);
+            --badge-n-bg:rgba(26,158,106,0.08); --badge-d-bg:rgba(214,63,94,0.08);
+            --th-bg:rgba(0,0,0,0.025);
+        }
+        html{transition:background 0.3s;}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background 0.3s,color 0.3s;}
+        body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0;}
+        nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between;transition:background 0.3s,border-color 0.3s;}
+        .nav-logo{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:10px;}
+        .nav-logo-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:800;color:#fff;}
+        .nav-right{display:flex;align-items:center;gap:4px;}
+        .nav-links{display:flex;gap:4px;}
+        .nav-links a{color:var(--muted);text-decoration:none;font-size:0.83rem;font-weight:500;padding:6px 14px;border-radius:8px;transition:all 0.2s;}
+        .nav-links a:hover{color:var(--text);background:var(--surface2);}
+        .theme-toggle{width:36px;height:36px;background:var(--toggle-bg);border:1px solid var(--toggle-bd);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:all 0.2s;margin-left:8px;user-select:none;}
+        .theme-toggle:hover{border-color:var(--accent);transform:scale(1.08);}
+        .page{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:56px 24px 80px;}
+        .btn-back{display:inline-flex;align-items:center;gap:6px;color:var(--muted);border:1px solid var(--border);padding:10px 20px;border-radius:10px;font-size:0.87rem;font-weight:500;text-decoration:none;transition:all 0.2s;}
+        .btn-back:hover{color:var(--text);border-color:var(--border-active);}
+        .fade-in{animation:fadeIn 0.5s ease forwards;}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+        .page-header{margin-bottom:36px;}
+        .page-icon{width:52px;height:52px;background:var(--tag-bg);border:1px solid var(--tag-bd);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:16px;}
+        .page-header h2{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--text);margin-bottom:6px;}
+        .page-header p{font-size:0.87rem;color:var(--muted);}
+
+        .history-table-wrapper{background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden;margin-bottom:28px;transition:background 0.3s,border-color 0.3s;}
+        table{width:100%;border-collapse:collapse;}
+        thead tr{background:var(--th-bg);border-bottom:1px solid var(--border);}
+        thead th{padding:14px 20px;text-align:left;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);}
+        tbody tr{border-bottom:1px solid var(--border);transition:background 0.15s;}
+        tbody tr:last-child{border-bottom:none;}
+        tbody tr:hover{background:var(--surface2);}
+        tbody td{padding:14px 20px;vertical-align:middle;font-size:0.88rem;}
+
+        .scan-thumb{width:64px;height:52px;object-fit:cover;border-radius:8px;border:1px solid var(--border);background:#000;}
+        .scan-type-badge{display:inline-flex;align-items:center;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2);color:#60A5FA;font-size:0.72rem;font-weight:700;padding:4px 10px;border-radius:100px;text-transform:uppercase;letter-spacing:0.06em;}
+        .pred-normal{display:inline-flex;align-items:center;gap:5px;color:var(--success);font-weight:600;font-size:0.88rem;}
+        .pred-disease{display:inline-flex;align-items:center;gap:5px;color:var(--danger);font-weight:600;font-size:0.88rem;}
+        .ts{color:var(--muted);font-size:0.82rem;}
+
+        .empty-state{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:80px 40px;text-align:center;margin-bottom:28px;}
+        .empty-icon{font-size:3rem;margin-bottom:20px;opacity:0.3;}
+        .empty-state h3{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:700;color:var(--text);margin-bottom:8px;}
+        .empty-state p{color:var(--muted);font-size:0.88rem;margin-bottom:24px;}
+        .btn-upload{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--accent),#18A896);color:#fff;padding:12px 24px;border-radius:10px;font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem;text-decoration:none;transition:all 0.2s;}
+        .btn-upload:hover{transform:translateY(-1px);}
+    </style>
+</head>
+<body>
+<nav>
+    <a href="/" class="nav-logo"><div class="nav-logo-icon">✚</div>MedScan AI</a>
+    <div class="nav-right">
+        <div class="nav-links">
+            <a href="/bmi">BMI</a><a href="/chatbot">Chatbot</a><a href="/history">History</a><a href="/about">About</a>
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="Toggle light/dark mode">☀️</button>
+    </div>
+</nav>
+<div class="page fade-in">
+    <div class="page-header">
+        <div class="page-icon">📋</div>
+        <h2>Analysis History</h2>
+        <p>Previously uploaded scans and their results</p>
+    </div>
+    {% if history %}
+    <div class="history-table-wrapper">
+        <table>
+            <thead>
+                <tr><th>Image</th><th>Scan Type</th><th>Prediction</th><th>Date & Time</th></tr>
+            </thead>
+            <tbody>
+                {% for item in history %}
+                <tr>
+                    <td><img src="{{ url_for('static', filename=item.image_filename) }}" class="scan-thumb" alt="scan"></td>
+                    <td><span class="scan-type-badge">{{ item.scan_type }}</span></td>
+                    <td>
+                        {% if item.label == 'Normal' or item.label == 'No Tumor' or item.label == 'Healthy' %}
+                        <span class="pred-normal">✓ {{ item.label }}</span>
+                        {% else %}
+                        <span class="pred-disease">⚠ {{ item.label }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="ts">{{ item.timestamp }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">📭</div>
+        <h3>No history yet</h3>
+        <p>Upload a medical scan to get started. Your results will appear here.</p>
+        <a href="/" class="btn-upload">Upload a Scan</a>
+    </div>
+    {% endif %}
+    <a href="/" class="btn-back">← Back to Home</a>
+</div>
+<script>
+    const THEME_KEY='medscan-theme';
+    function applyTheme(t){document.documentElement.setAttribute('data-theme',t);const b=document.getElementById('themeBtn');if(b)b.textContent=t==='dark'?'☀️':'🌙';localStorage.setItem(THEME_KEY,t);}
+    function toggleTheme(){applyTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');}
+    applyTheme(localStorage.getItem(THEME_KEY)||'dark');
+</script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <title>Diet Plan - MedScan AI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+        :root,[data-theme="dark"] {
+            --bg:#080E1A; --surface:#0F1827; --surface2:#152030;
+            --border:rgba(255,255,255,0.07); --border-active:rgba(32,201,181,0.4);
+            --accent:#20C9B5; --accent2:#3B82F6; --text:#F0F4FF; --muted:#8899AA;
+            --danger:#FF5E7E; --success:#34D399;
+            --nav-bg:rgba(8,14,26,0.88); --grid-line:rgba(32,201,181,0.03);
+            --tag-bg:rgba(32,201,181,0.08); --tag-bd:rgba(32,201,181,0.2);
+            --toggle-bg:#152030; --toggle-bd:rgba(255,255,255,0.12);
+            --badge-n-bg:rgba(52,211,153,0.1); --badge-n-bd:rgba(52,211,153,0.3);
+            --badge-d-bg:rgba(255,94,126,0.1); --badge-d-bd:rgba(255,94,126,0.3);
+            --chip-bg:#152030;
+        }
+        [data-theme="light"] {
+            --bg:#F4F7FB; --surface:#FFFFFF; --surface2:#EEF2F8;
+            --border:rgba(0,0,0,0.08); --border-active:rgba(12,158,145,0.35);
+            --accent:#0C9E91; --accent2:#2563EB; --text:#0B1F3A; --muted:#5A6A82;
+            --danger:#D63F5E; --success:#1A9E6A;
+            --nav-bg:rgba(244,247,251,0.92); --grid-line:rgba(12,158,145,0.04);
+            --tag-bg:rgba(12,158,145,0.07); --tag-bd:rgba(12,158,145,0.18);
+            --toggle-bg:#E8EDF5; --toggle-bd:rgba(0,0,0,0.1);
+            --badge-n-bg:rgba(26,158,106,0.08); --badge-n-bd:rgba(26,158,106,0.3);
+            --badge-d-bg:rgba(214,63,94,0.08); --badge-d-bd:rgba(214,63,94,0.3);
+            --chip-bg:#EEF2F8;
+        }
+        html{transition:background 0.3s;}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background 0.3s,color 0.3s;}
+        body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0;}
+        nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between;transition:background 0.3s,border-color 0.3s;}
+        .nav-logo{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:10px;}
+        .nav-logo-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:800;color:#fff;}
+        .nav-right{display:flex;align-items:center;gap:4px;}
+        .nav-links{display:flex;gap:4px;}
+        .nav-links a{color:var(--muted);text-decoration:none;font-size:0.83rem;font-weight:500;padding:6px 14px;border-radius:8px;transition:all 0.2s;}
+        .nav-links a:hover{color:var(--text);background:var(--surface2);}
+        .theme-toggle{width:36px;height:36px;background:var(--toggle-bg);border:1px solid var(--toggle-bd);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:all 0.2s;margin-left:8px;user-select:none;}
+        .theme-toggle:hover{border-color:var(--accent);transform:scale(1.08);}
+        .page{position:relative;z-index:1;max-width:580px;margin:0 auto;padding:56px 24px 80px;}
+        .card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:36px 40px;transition:background 0.3s,border-color 0.3s;}
+        .divider{border:none;border-top:1px solid var(--border);margin:28px 0;}
+        .btn-back{display:inline-flex;align-items:center;gap:6px;color:var(--muted);border:1px solid var(--border);padding:10px 20px;border-radius:10px;font-size:0.87rem;font-weight:500;text-decoration:none;transition:all 0.2s;}
+        .btn-back:hover{color:var(--text);border-color:var(--border-active);}
+        .fade-in{animation:fadeIn 0.5s ease forwards;}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+        .page-header{text-align:center;margin-bottom:36px;}
+        .page-icon{width:64px;height:64px;background:var(--badge-n-bg);border:1px solid var(--badge-n-bd);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 20px;}
+        .page-header h2{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--text);margin-bottom:10px;}
+        .disease-badge{display:inline-flex;align-items:center;gap:6px;background:var(--badge-d-bg);border:1px solid var(--badge-d-bd);color:var(--danger);font-size:0.82rem;font-weight:600;padding:5px 14px;border-radius:100px;letter-spacing:0.04em;}
+
+        .field-label{display:block;font-size:0.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.09em;margin-bottom:12px;}
+        .pref-chips{display:flex;gap:8px;margin-bottom:24px;}
+        .pref-chip{flex:1;padding:12px 8px;border-radius:10px;border:1px solid var(--border);background:var(--chip-bg);color:var(--muted);font-size:0.82rem;font-weight:600;text-align:center;cursor:pointer;transition:all 0.2s;user-select:none;}
+        .pref-chip:hover{border-color:var(--badge-n-bd);color:var(--text);}
+        .pref-chip.active{border-color:var(--success);background:var(--badge-n-bg);color:var(--success);}
+        select#pref-hidden{display:none;}
+
+        .btn-primary{width:100%;background:linear-gradient(135deg,var(--success),#1aaa72);color:#fff;border:none;padding:14px;border-radius:10px;font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;transition:all 0.2s;}
+        .btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(52,211,153,0.2);}
+
+        .diet-result{background:var(--badge-n-bg);border:1px solid var(--badge-n-bd);border-radius:14px;padding:22px 24px;}
+        .diet-result-label{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--success);margin-bottom:10px;}
+        .diet-result-text{font-size:0.93rem;color:var(--text);line-height:1.7;}
+
+        .action-bar{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:24px;}
+        .btn-doctors{display:inline-flex;align-items:center;gap:8px;background:var(--badge-d-bg);border:1px solid var(--badge-d-bd);color:var(--danger);padding:11px 22px;border-radius:10px;font-size:0.87rem;font-weight:600;text-decoration:none;transition:all 0.2s;}
+        .btn-doctors:hover{filter:brightness(1.15);}
+    </style>
+</head>
+<body>
+<nav>
+    <a href="/" class="nav-logo"><div class="nav-logo-icon">✚</div>MedScan AI</a>
+    <div class="nav-right">
+        <div class="nav-links">
+            <a href="/bmi">BMI</a><a href="/chatbot">Chatbot</a><a href="/history">History</a><a href="/about">About</a>
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="Toggle light/dark mode">☀️</button>
+    </div>
+</nav>
+<div class="page fade-in">
+    <div class="page-header">
+        <div class="page-icon">🥗</div>
+        <h2>Diet Plan</h2>
+        <div class="disease-badge">⚠ {{ disease }}</div>
+    </div>
+    <div class="card">
+        <form method="POST">
+            <label class="field-label">Select Diet Preference</label>
+            <div class="pref-chips">
+                <div class="pref-chip" onclick="selectPref('veg',this)">🌱 Vegetarian</div>
+                <div class="pref-chip" onclick="selectPref('nonveg',this)">🍗 Non-Veg</div>
+                <div class="pref-chip" onclick="selectPref('vegan',this)">🌿 Vegan</div>
+            </div>
+            <select name="preference" id="pref-hidden" required>
+                <option value="">Choose</option>
+                <option value="veg">Vegetarian</option>
+                <option value="nonveg">Non-Vegetarian</option>
+                <option value="vegan">Vegan</option>
+            </select>
+            <button type="submit" class="btn-primary">Get My Diet Plan</button>
+        </form>
+        {% if diet %}
+        <div class="divider"></div>
+        <div class="diet-result">
+            <div class="diet-result-label">✦ Recommended Diet</div>
+            <div class="diet-result-text">{{ diet }}</div>
+        </div>
+        {% endif %}
+        <div class="action-bar">
+            <a href="/doctor?disease={{ disease }}" class="btn-doctors">🩺 View Doctors</a>
+            <a href="/" class="btn-back">← Back to Home</a>
+        </div>
+    </div>
+</div>
+<script>
+    const THEME_KEY='medscan-theme';
+    function applyTheme(t){document.documentElement.setAttribute('data-theme',t);const b=document.getElementById('themeBtn');if(b)b.textContent=t==='dark'?'☀️':'🌙';localStorage.setItem(THEME_KEY,t);}
+    function toggleTheme(){applyTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');}
+    applyTheme(localStorage.getItem(THEME_KEY)||'dark');
+    function selectPref(value,el){document.querySelectorAll('.pref-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');document.getElementById('pref-hidden').value=value;}
+</script>
+</body>
+</html>

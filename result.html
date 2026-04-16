@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <title>Result - MedScan AI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+        :root,[data-theme="dark"] {
+            --bg:#080E1A; --surface:#0F1827; --surface2:#152030;
+            --border:rgba(255,255,255,0.07); --border-active:rgba(32,201,181,0.4);
+            --accent:#20C9B5; --accent2:#3B82F6; --text:#F0F4FF; --muted:#8899AA;
+            --danger:#FF5E7E; --success:#34D399;
+            --nav-bg:rgba(8,14,26,0.88); --grid-line:rgba(32,201,181,0.03);
+            --tag-bg:rgba(32,201,181,0.08); --tag-bd:rgba(32,201,181,0.2);
+            --toggle-bg:#152030; --toggle-bd:rgba(255,255,255,0.12);
+            --badge-n-bg:rgba(52,211,153,0.1); --badge-n-bd:rgba(52,211,153,0.3);
+            --badge-d-bg:rgba(255,94,126,0.1); --badge-d-bd:rgba(255,94,126,0.3);
+        }
+        [data-theme="light"] {
+            --bg:#F4F7FB; --surface:#FFFFFF; --surface2:#EEF2F8;
+            --border:rgba(0,0,0,0.08); --border-active:rgba(12,158,145,0.35);
+            --accent:#0C9E91; --accent2:#2563EB; --text:#0B1F3A; --muted:#5A6A82;
+            --danger:#D63F5E; --success:#1A9E6A;
+            --nav-bg:rgba(244,247,251,0.92); --grid-line:rgba(12,158,145,0.04);
+            --tag-bg:rgba(12,158,145,0.07); --tag-bd:rgba(12,158,145,0.18);
+            --toggle-bg:#E8EDF5; --toggle-bd:rgba(0,0,0,0.1);
+            --badge-n-bg:rgba(26,158,106,0.08); --badge-n-bd:rgba(26,158,106,0.3);
+            --badge-d-bg:rgba(214,63,94,0.08); --badge-d-bd:rgba(214,63,94,0.3);
+        }
+        html{transition:background 0.3s;}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background 0.3s,color 0.3s;}
+        body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0;}
+        nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between;transition:background 0.3s,border-color 0.3s;}
+        .nav-logo{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:10px;}
+        .nav-logo-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:800;color:#fff;}
+        .nav-right{display:flex;align-items:center;gap:4px;}
+        .nav-links{display:flex;gap:4px;}
+        .nav-links a{color:var(--muted);text-decoration:none;font-size:0.83rem;font-weight:500;padding:6px 14px;border-radius:8px;transition:all 0.2s;}
+        .nav-links a:hover{color:var(--text);background:var(--surface2);}
+        .theme-toggle{width:36px;height:36px;background:var(--toggle-bg);border:1px solid var(--toggle-bd);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:all 0.2s;margin-left:8px;user-select:none;}
+        .theme-toggle:hover{border-color:var(--accent);transform:scale(1.08);}
+        .page{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:56px 24px 80px;}
+        .card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:36px 40px;transition:background 0.3s,border-color 0.3s;}
+        .divider{border:none;border-top:1px solid var(--border);margin:28px 0;}
+        .btn-back{display:inline-flex;align-items:center;gap:6px;color:var(--muted);border:1px solid var(--border);padding:10px 20px;border-radius:10px;font-size:0.87rem;font-weight:500;text-decoration:none;transition:all 0.2s;}
+        .btn-back:hover{color:var(--text);border-color:var(--border-active);}
+        .fade-in{animation:fadeIn 0.5s ease forwards;}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+        .page-header{text-align:center;margin-bottom:28px;}
+        .card-icon{width:52px;height:52px;background:var(--tag-bg);border:1px solid var(--tag-bd);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin:0 auto 14px;}
+        .page-header h2{font-family:'Syne',sans-serif;font-size:1.55rem;font-weight:700;color:var(--text);margin-bottom:6px;}
+        .page-header p{font-size:0.87rem;color:var(--muted);}
+
+        .scan-image-wrapper{position:relative;margin-bottom:28px;border-radius:14px;overflow:hidden;border:1px solid var(--border);background:#000;}
+        .scan-image-wrapper img{width:100%;max-height:320px;object-fit:contain;display:block;}
+        .scan-image-wrapper::after{content:'SCAN';position:absolute;top:12px;left:12px;font-size:0.65rem;font-weight:700;letter-spacing:0.12em;color:var(--accent);background:rgba(8,14,26,0.85);border:1px solid var(--tag-bd);padding:3px 8px;border-radius:6px;}
+
+        .diagnosis-section{text-align:center;padding:20px 0;}
+        .diagnosis-label{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);margin-bottom:14px;}
+        .badge-normal{display:inline-flex;align-items:center;gap:8px;background:var(--badge-n-bg);border:1px solid var(--badge-n-bd);color:var(--success);font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:700;padding:12px 28px;border-radius:100px;}
+        .badge-disease{display:inline-flex;align-items:center;gap:8px;background:var(--badge-d-bg);border:1px solid var(--badge-d-bd);color:var(--danger);font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:700;padding:12px 28px;border-radius:100px;}
+
+        .healthy-box{background:var(--badge-n-bg);border:1px solid var(--badge-n-bd);border-radius:12px;padding:18px 22px;color:var(--success);font-size:0.9rem;font-weight:500;text-align:center;}
+        .recommendation-text{font-size:0.88rem;color:var(--muted);text-align:center;line-height:1.7;margin-bottom:20px;}
+        .action-buttons{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+        .btn-danger{display:inline-flex;align-items:center;gap:6px;background:var(--badge-d-bg);border:1px solid var(--badge-d-bd);color:var(--danger);padding:11px 22px;border-radius:10px;font-size:0.87rem;font-weight:600;text-decoration:none;transition:all 0.2s;}
+        .btn-danger:hover{filter:brightness(1.15);}
+        .btn-success-link{display:inline-flex;align-items:center;gap:6px;background:var(--badge-n-bg);border:1px solid var(--badge-n-bd);color:var(--success);padding:11px 22px;border-radius:10px;font-size:0.87rem;font-weight:600;text-decoration:none;transition:all 0.2s;}
+        .btn-success-link:hover{filter:brightness(1.15);}
+        .bottom-bar{text-align:center;margin-top:24px;}
+    </style>
+</head>
+<body>
+<nav>
+    <a href="/" class="nav-logo"><div class="nav-logo-icon">✚</div>MedScan AI</a>
+    <div class="nav-right">
+        <div class="nav-links">
+            <a href="/bmi">BMI</a><a href="/chatbot">Chatbot</a><a href="/history">History</a><a href="/about">About</a>
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="Toggle light/dark mode">☀️</button>
+    </div>
+</nav>
+<div class="page fade-in">
+    <div class="page-header">
+        <div class="card-icon">🔬</div>
+        <h2>Analysis Result</h2>
+        <p>CNN-based diagnostic output</p>
+    </div>
+    <div class="card">
+        {% if filename %}
+        <div class="scan-image-wrapper">
+            <img src="{{ url_for('static', filename='uploads/' + filename) }}" alt="Uploaded scan">
+        </div>
+        {% endif %}
+        <div class="diagnosis-section">
+            <div class="diagnosis-label">Diagnosis Result</div>
+            {% if prediction == 'Normal' or prediction == 'No Tumor' or prediction == 'Healthy' %}
+            <div class="badge-normal"><span>✓</span> {{ prediction }}</div>
+            {% else %}
+            <div class="badge-disease"><span>⚠</span> {{ prediction }}</div>
+            {% endif %}
+        </div>
+        <hr class="divider">
+        {% if prediction != 'Normal' and prediction != 'No Tumor' and prediction != 'Healthy' %}
+        <p class="recommendation-text">Based on the detected condition, we recommend consulting a specialist and following a personalized diet plan.</p>
+        <div class="action-buttons">
+            <a href="/doctor?disease={{ prediction }}" class="btn-danger">🩺 View Doctors</a>
+            <a href="/diet?disease={{ prediction }}" class="btn-success-link">🥗 View Diet Plan</a>
+        </div>
+        {% else %}
+        <div class="healthy-box">✅ &nbsp;You are healthy. No additional recommendations needed.</div>
+        {% endif %}
+    </div>
+    <div class="bottom-bar"><a href="/" class="btn-back">← Upload Another Image</a></div>
+</div>
+<script>
+    const THEME_KEY='medscan-theme';
+    function applyTheme(t){document.documentElement.setAttribute('data-theme',t);const b=document.getElementById('themeBtn');if(b)b.textContent=t==='dark'?'☀️':'🌙';localStorage.setItem(THEME_KEY,t);}
+    function toggleTheme(){applyTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');}
+    applyTheme(localStorage.getItem(THEME_KEY)||'dark');
+</script>
+</body>
+</html>
